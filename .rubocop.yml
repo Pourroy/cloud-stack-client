@@ -1,0 +1,89 @@
+# frozen_string_literal: true
+
+require:
+  - rubocop-rails
+
+AllCops:
+  TargetRubyVersion: 2.6.0
+  Exclude:
+    - 'bin/**/*'
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'test/**/*'
+    - 'script/**/*'
+    - 'vendor/**/*'
+    - 'lib/tasks/*'
+    - 'config.ru'
+    - 'Rakefile'
+    - 'spec/**/*'
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Naming/FileName:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: 1000
+
+Metrics/ModuleLength:
+  Enabled: 1000
+
+Metrics/MethodLength:
+  Enabled: 100
+
+Metrics/ParameterLists:
+  Max: 7
+
+Layout/LineLength:
+  Max: 160
+
+Metrics/AbcSize:
+  Max: 100
+
+Metrics/CyclomaticComplexity:
+  Max: 20
+
+Metrics/PerceivedComplexity:
+  Max: 20
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+Rails/FilePath:
+  EnforcedStyle: arguments
+
+Naming/VariableName:
+  EnforcedStyle: snake_case
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: either

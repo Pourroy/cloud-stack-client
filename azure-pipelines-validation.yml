@@ -1,0 +1,28 @@
+trigger:
+- validation
+
+resources:
+  containers:
+  - container: builder
+    image: locawebci/ea-op-ful-cloud-ruby-test:3.0.3-latest
+    endpoint: docker-registry
+
+stages:
+- stage: TestAndQuality
+  displayName: "Tests and Quality"
+  jobs:
+  - job: Test
+    pool: LW.Private.Agents
+    displayName: 'Test'
+    container: builder
+    steps:
+      - script: |
+          bundle install --retry=3 --jobs=8
+        displayName: 'Bundle install'
+        target:
+          container: builder
+
+      - script: |
+          RAILS_ENV=test bundle exec rspec
+          RAILS_ENV=test bundle exec rubocop --parallel
+        displayName: 'Execute tests'
