@@ -22,7 +22,7 @@ gem 'cloudstack-client'
 
     # This API attach and iso in your cloudstack virtual machine with the following params
     cs.attach_iso(id: 'image_id', virtualmachineid: 'vm_id') # Always use APIs in snakecase
-    # Original API documentation https://cloudstack.apache.org/api/apidocs-4.18/apis/attachIso.html
+    # Original attachIso API documentation https://cloudstack.apache.org/api/apidocs-4.18/apis/attachIso.html
 ```
 
 ## Contributing
