@@ -1,4 +1,4 @@
-module EaOpFulCloudstackClient
+module CloudstackClient
   class Error < StandardError
     attr_accessor :type, :code, :message, :job_id
 
@@ -6,7 +6,7 @@ module EaOpFulCloudstackClient
       super(message)
       @type = type
       @code = code
-      @message = message
+      @message = message.to_s
       @job_id = job_id
     end
 

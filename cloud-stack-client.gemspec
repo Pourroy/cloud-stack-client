@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative 'lib/ea-op-ful-cloud-stack-client/version'
+require_relative 'lib/cloud-stack-client/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'ea-op-ful-cloud-stack-client'
-  spec.version = EaOpFulCloudstackClient::VERSION
+  spec.name = 'cloud-stack-client'
+  spec.version = CloudstackClient::VERSION
   spec.authors = ['Enterprise Applications']
   spec.email = ['enterpriseapplications@locaweb.com.br']
 
   spec.summary = 'Cloudstack client'
   spec.description = 'Cloudstack client'
-  spec.homepage = 'https://dev.azure.com/locaweb/apps-ea-op-ful-cloud/_git/ea-op-ful-cloud-stack-client'
+  spec.homepage = 'https://github.com/Pourroy/cloud-stack-client'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 2.6.0'
 

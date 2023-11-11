@@ -1,5 +1,7 @@
-module EaOpFulCloudstackClient
+module CloudstackClient
   module Utils
+    FILTERABLE_PARAMETERS = %i[publickey keypair password apiKey].freeze
+
     def camel_case_to_underscore(camel_case)
       camel_case.gsub(/::/, '/')
         .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
@@ -20,6 +22,13 @@ module EaOpFulCloudstackClient
       Rails.logger.info separator
       Rails.logger.info output
       Rails.logger.info separator
+    end
+
+    def filtering_params(params)
+      return params unless params.is_a?(Hash)
+
+      forbidden_words = ActiveSupport::ParameterFilter.new(FILTERABLE_PARAMETERS)
+      forbidden_words.filter(params)
     end
   end
 end

@@ -5,7 +5,7 @@ require 'cgi'
 require 'net/http'
 require 'json'
 
-module EaOpFulCloudstackClient
+module CloudstackClient
   class Connection
     include Utils
 
@@ -13,8 +13,9 @@ module EaOpFulCloudstackClient
 
     DEF_POLL_INTERVAL = 2.0
     DEF_ASYNC_TIMEOUT = 400
-    def initialize(transaction, api_url, api_key, secret_key, options = {}, method_process = nil)
+    def initialize(transaction, telemetry, api_url, api_key, secret_key, options = {}, method_process = nil)
       @transaction = transaction
+      @telemetry = telemetry
       @api_url = api_url
       @api_key = api_key
       @secret_key = secret_key
@@ -28,22 +29,26 @@ module EaOpFulCloudstackClient
     end
 
     def send_request(params)
+      Rails.logger.info("::send_request: Request with params: #{filtering_params(params)}")
       params['response'] = 'json'
       params['apiKey'] = @api_key
       print_debug_output JSON.pretty_generate(params) if @debug
       data = params_to_data(params)
       uri = URI.parse "#{@api_url}?#{data}&signature=#{create_signature(data)}"
-
       http = Net::HTTP.new(uri.host, uri.port)
       if uri.scheme == 'https'
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
+      http.max_retries = 0
+      http.read_timeout = 180
 
       begin
         response = http.request(Net::HTTP::Get.new(uri.request_uri))
-      rescue StandardError
-        raise Error.new('ConectionError', 500, "API URL \'#{@api_url}\' is not reachable.")
+        Rails.logger.info("::send_request: Response code: #{response.code}")
+        Rails.logger.info("::send_request: Response body: #{filtering_params(response.body)}")
+      rescue StandardError => e
+        raise Error.new('ConectionError', 500, "API URL \'#{@api_url}\' is not reachable, Reason: #{e.message}, Response: #{e.try(:response).try(:to_json)}")
       end
 
       begin
@@ -53,23 +58,16 @@ module EaOpFulCloudstackClient
         raise Error.new('ParserError', 405, message)
       end
 
-      if response.is_a?(Net::HTTPOK)
-        return body unless body.respond_to?(:keys)
-        return body.reject { |key, _| key == 'count' }.values.first if body.size == 2 && body.key?('count')
+      raise Error.new('ApiError', response.code, body) unless response.is_a?(Net::HTTPOK)
+      return body unless body.respond_to?(:keys)
+      return body.reject { |key, _| key == 'count' }.values.first if body.size == 2 && body.key?('count')
 
-        if body.size == 1 && body.values.first.respond_to?(:keys)
-          item = body.values.first
-          item.is_a?(Array) || item.is_a?(Hash) ? item : []
-        else
-          body.reject! { |key, _| key == 'count' } if body.key?('count')
-          body.empty? ? [] : body
-        end
+      if body.size == 1 && body.values.first.respond_to?(:keys)
+        item = body.values.first
+        item.is_a?(Array) || item.is_a?(Hash) ? item : []
       else
-        begin
-          message = body['errortext']
-        rescue body
-          raise Error.new('ApiError', response.code, message)
-        end
+        body.reject! { |key, _| key == 'count' } if body.key?('count')
+        body.empty? ? [] : body
       end
     end
 
@@ -90,7 +88,7 @@ module EaOpFulCloudstackClient
 
       max_tries.times do
         data = send_request(params)
-        Rails.logger.info("[#{@transaction}] ::JobId:#{data['jobid']} - JobStatus:#{data['jobstatus']}") if @verbose
+        Rails.logger.info("::JobId:#{data['jobid']} - JobStatus:#{data['jobstatus']}") if @verbose
 
         case data['jobstatus']
         when 1

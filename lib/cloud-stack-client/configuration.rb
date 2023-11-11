@@ -1,4 +1,4 @@
-module EaOpFulCloudstackClient
+module CloudstackClient
   require 'yaml'
 
   module Configuration

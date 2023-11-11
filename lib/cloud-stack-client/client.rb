@@ -1,17 +1,19 @@
-require 'ea-op-ful-cloud-stack-client/version'
-require 'ea-op-ful-cloud-stack-client/api'
-require 'ea-op-ful-cloud-stack-client/error'
-require 'ea-op-ful-cloud-stack-client/utils'
-require 'ea-op-ful-cloud-stack-client/connection'
+require 'cloud-stack-client/version'
+require 'cloud-stack-client/api'
+require 'cloud-stack-client/error'
+require 'cloud-stack-client/utils'
+require 'cloud-stack-client/connection'
 
-module EaOpFulCloudstackClient
+module CloudstackClient
   class Client < Connection
     include Utils
+
     attr_accessor :options, :async
     attr_reader :api
 
-    def initialize(transaction, api_url, api_key, secret_key, options = {}, method_process = nil)
-      super(transaction, api_url, api_key, secret_key, options, method_process)
+    def initialize(transaction, api_url, api_key, secret_key, telemetry = nil, options = {}, method_process = nil)
+      super(transaction, telemetry, api_url, api_key, secret_key, options, method_process)
+      @telemetry = telemetry
       define_api_methods unless options[:no_api_methods]
     end
 
@@ -19,8 +21,8 @@ module EaOpFulCloudstackClient
       @api = Api.new(@options)
       @api.commands.each do |_name, command|
         method_name = camel_case_to_underscore(command['name']).to_sym
-
         define_singleton_method(method_name) do |args = {}, options = {}|
+          @telemetry&.add_event("CloudstackClient: { :api => '#{command['name']}', :body => #{filtering_params(args)} }")
           params = { 'command' => command['name'] }
 
           args.each do |k, v|
@@ -48,12 +50,12 @@ module EaOpFulCloudstackClient
       result = send_request(params)
       case result['jobstatus']
       when 1
-        Rails.logger.info("[#{@transaction}] ::JobId:#{jobid} - Job Finished")
+        Rails.logger.info("::jobid_status_check::JobId:#{jobid} - Job Finished")
         'Finished'
       when 2
         raise Error.new('JobError', result['jobresultcode'], result['jobresult']['errortext'])
       else
-        Rails.logger.info("[#{@transaction}] ::JobId:#{jobid} - Proccessing")
+        Rails.logger.info("jobid_status_check::JobId:#{jobid} - Proccessing")
         'Processing'
       end
     end

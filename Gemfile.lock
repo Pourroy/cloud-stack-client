@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ea-op-ful-cloud-stack-client (1.0.2)
+    cloud-stack-client (1.0.12)
 
 GEM
   remote: https://rubygems.org/
@@ -140,7 +140,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  ea-op-ful-cloud-stack-client!
+  cloud-stack-client!
   geminabox
   pry
   rake (~> 13.0)

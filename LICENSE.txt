@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2022 Ruan Pourroy - Co-autored: Italo Miranda
+Copyright (c) 2022 Ruan Pourroy - Co-autored:  Francisco Lionel, Italo Miranda, Leonardo Teodoro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the 'Software'), to deal

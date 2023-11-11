@@ -11,7 +11,6 @@ RuboCop::RakeTask.new
 
 task default: %i[spec rubocop]
 
-
 task :publish do
-  puts `gem inabox -g http://gems.locaweb.com.br/ pkg/ea-op-ful-cloud-stack-client-*#{EaOpFulCloudstackClient::VERSION}.gem`
+  puts `gem push pkg/cloud-stack-client-#{CloudstackClient::VERSION}.gem --host https://rubygems.com.br`
 end

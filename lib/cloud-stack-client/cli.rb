@@ -1,5 +1,5 @@
-require 'ea-op-ful-cloud-stack-client/client'
-require 'ea-op-ful-cloud-stack-client/configuration'
+require 'cloud-stack-client/client'
+require 'cloud-stack-client/configuration'
 require 'yaml'
 require 'json'
 
@@ -16,7 +16,7 @@ rescue LoadError => e
   raise e.message
 end
 
-module EaOpFulCloudstackClient
+module CloudstackClient
   class Cli < Thor
     include Thor::Actions
 
@@ -38,15 +38,15 @@ module EaOpFulCloudstackClient
       super
     rescue StandardError => e
       error_class = e.class.name.split('::')
-      raise unless error_class.size == 2 && error_class.first == 'EaOpFulCloudstackClient'
+      raise unless error_class.size == 2 && error_class.first == 'CloudstackClient'
 
       Rails.logger.debug("\e[31mERROR\e[0m: #{error_class.last} - #{e.message}")
       Rails.logger.debug e.backtrace if ARGV.include? '--debug'
     end
 
-    desc 'version', 'Print ea-op-ful-cloud-stack-client version number'
+    desc 'version', 'Print cloud-stack-client version number'
     def version
-      say "ea-op-ful-cloud-stack-client version #{EaOpFulCloudstackClient::VERSION}"
+      say "cloud-stack-client version #{CloudstackClient::VERSION}"
     end
     map %w[-v --version] => :version
 
@@ -86,7 +86,7 @@ module EaOpFulCloudstackClient
     def console
       cs_client = client(options)
 
-      Rails.logger.debug("ea-op-ful-cloud-stack-client version #{CloudstackClient::VERSION}")
+      Rails.logger.debug("cloud-stack-client version #{CloudstackClient::VERSION}")
       Rails.logger.debug(" CloudStack API version #{cs_client.api.api_version}")
       Rails.logger.debug('  try: list_virtual_machines state: "running"')
 

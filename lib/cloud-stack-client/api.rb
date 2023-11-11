@@ -2,9 +2,9 @@
 
 require 'zlib'
 require 'json'
-require 'ea-op-ful-cloud-stack-client/utils'
+require 'cloud-stack-client/utils'
 
-module EaOpFulCloudstackClient
+module CloudstackClient
   class Api
     include Utils
 

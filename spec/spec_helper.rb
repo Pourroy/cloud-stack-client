@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ea-op-ful-cloud-stack-client'
+require 'cloud-stack-client'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
